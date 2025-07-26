@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Registered Users</title>
+    <style>
+        table {  
+            background-color: #d9f2d9; /* light green */
+            border-collapse: collapse;
+            width: 100%;
+        }
+        thead {
+            background-color: #1edb1e; /* medium green */
+            color: #1a3d1a; /* dark green text */
+        }
+        th, td {
+            border: 1px solid #d62323;
+            padding: 8px;
+            text-align: left;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #e6f4e6; /* lighter green for even rows */
+        }
+        button {
+            background-color: #d9534f; /* bootstrap danger red */
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <h2>Registered Users</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Vehicle Number</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.vehicle_number }}</td>
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>  

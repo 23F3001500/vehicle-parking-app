@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Reserve Spot{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <!-- Title and Back Button in Same Row -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="color: #be0763;">Reserve a Parking Spot</h2>
+        <a href="{{ url_for('user_dashboard') }}" class="btn" style="background-color: #c90a6a; color: white;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <style>
+        .lot-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .lot-card {
+            flex: 1 1 calc(50% - 20px);
+            min-width: 250px;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 16px 20px;
+            background-color: #fff5f8; /* Light pink */
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lot-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .lot-card input[type="radio"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #007bff;
+            border-radius: 50%;
+            outline: none;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .lot-card input[type="radio"]:checked::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 8px;
+            height: 8px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+
+        .lot-card.selected {
+            background-color: #ffeaf2;
+            border-color: #c90a6a;
+        }
+
+        .lot-details {
+            flex-grow: 1;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+        }
+
+        .lot-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 17px;
+        }
+    </style>
+
+    <form method="POST" id="reserveForm">
+        <label for="lot_id" class="lot-label">Select a Parking Lot:</label>
+        <div class="lot-options">
+            {% for lot in lots %}
+            <label class="lot-card">
+                <input type="radio" name="lot_id" value="{{ lot.id }}" required>
+                <div class="lot-details">
+                    <div><strong>Name:</strong> {{ lot.name }}</div>
+                    <div><strong>Location:</strong> {{ lot.address }}</div>
+                    <div><strong>Cost:</strong> ₹{{ lot.price }}/hr</div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="center-button mt-4">
+            <button type="submit" class="btn btn-primary">Reserve Spot</button>
+        </div>
+    </form>
+
+    <script>
+        const radios = document.querySelectorAll(".lot-card input[type='radio']");
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.querySelectorAll('.lot-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                this.closest('.lot-card').classList.add('selected');
+            });
+        });
+    </script>
+</div>
+{% endblock %}

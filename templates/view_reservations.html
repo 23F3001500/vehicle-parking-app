@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}My Reservations{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="color: #c2185b;">My Reservations</h2>
+        <a href="{{ url_for('user_dashboard') }}" class="btn" style="background-color: #c2185b; color: white;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <div style="margin-top: 30px;">  <!-- Added spacing before the table -->
+    {% if reservations %}
+        <table style="border-collapse: collapse; width: 100%; border: 3px solid #155724;">
+            <thead>
+                <tr>
+                    <th style="border: 3px solid #155724; background-color: #d0f0c0; padding: 8px;">Lot</th>
+                    <th style="border: 3px solid #155724; background-color: #d0f0c0; padding: 8px;">Spot ID</th>
+                    <th style="border: 3px solid #155724; background-color: #d0f0c0; padding: 8px;">Start Time</th>
+                    <th style="border: 3px solid #155724; background-color: #d0f0c0; padding: 8px;">End Time</th>
+                    <th style="border: 3px solid #155724; background-color: #d0f0c0; padding: 8px;">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservations %}
+                    {% if r.spot and r.spot.lot %}
+                    <tr>
+                        <td style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;">{{ r.spot.lot.name }}</td>
+                        <td style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;">{{ r.spot.id }}</td>
+                        <td style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;">{{ r.start_time }}</td>
+                        <td style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;">{{ r.end_time if r.end_time else "Ongoing" }}</td>
+                        <td style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;">{{ r.cost if r.cost else "Pending" }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="border: 3px solid #155724; background-color: #e6f9db; padding: 8px;" class="text-muted">
+                            Reservation data unavailable (deleted spot or lot)
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">You have no reservations yet.</p>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

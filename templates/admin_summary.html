@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Summary Charts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fef6f9, #f0faff);
+      color: #c2185b;
+      overflow: hidden; /* Prevent scroll */
+    }
+
+    .container {
+      height: 100vh;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header-row h2 {
+      font-size: 2.4rem;
+      color: #c2185b;
+      margin: 0;
+    }
+
+    .btn-back {
+      background-color: #c2185b;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background-color: #a7154a;
+    }
+
+    .charts-wrapper {
+      display: flex;
+      flex: 1;
+      gap: 20px;
+    }
+
+    .chart-box {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-row">
+      <h2>Parking Lot Summary</h2>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn-back">← Back to Dashboard</a>
+    </div>
+
+    <div class="charts-wrapper">
+      <div class="chart-box">
+        <canvas id="barChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const lotNames = {{ lot_names | tojson }};
+    const totalSpots = {{ total_spots | tojson }};
+    const occupiedSpots = {{ occupied_spots | tojson }};
+    const bookedSpots = {{ booked_spots | tojson }};
+    const availableSpots = {{ available_spots | tojson }};
+
+    const totalOccupied = {{ total_occupied }};
+    const totalBooked = {{ total_booked }};
+    const totalAvailable = {{ total_available }};
+
+    new Chart(document.getElementById('barChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: lotNames,
+        datasets: [
+          {
+            label: 'Total Spots',
+            data: totalSpots,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          },
+          {
+            label: 'Occupied Spots',
+            data: occupiedSpots,
+            backgroundColor: 'rgba(255, 99, 132, 0.7)'
+          },
+          {
+            label: 'Available Spots',
+            data: availableSpots,
+            backgroundColor: 'rgba(75, 192, 192, 0.7)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#c2185b' } }
+        },
+        scales: {
+          x: { ticks: { color: '#c2185b' } },
+          y: { beginAtZero: true, ticks: { color: '#c2185b' } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('pieChart').getContext('2d'), {
+      type: 'pie',
+      data: {
+        labels: ['Occupied', 'Available'],
+        datasets: [{
+          data: [totalOccupied, totalAvailable],
+          backgroundColor: ['#FF6384', '#36A2EB']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#c2185b' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

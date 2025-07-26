@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Spot Status{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Parking Spot Status</h2>
+    
+    {% for lot in lots %}
+        <h4 class="mt-4">{{ lot.name }} (₹{{ lot.price }}/hr)</h4>
+        <div class="row">
+            {% for spot in lot.spots %}
+                <div class="col-md-4 mb-3">
+                    <div class="card {% if spot.status == 'A' %}border-success{% else %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">Spot ID: {{ spot.id }}</h5>
+                            <p>Status: <strong>{{ 'Available' if spot.status == 'A' else 'Occupied' }}</strong></p>
+
+                            {% if spot.status == 'O' %}
+                                <form method="POST" action="{{ url_for('spot_status', spot_id=spot.id) }}">
+                                    <input type="hidden" name="new_status" value="R">
+                                    <button type="submit" class="btn btn-warning">Release Spot</button>
+                                </form>
+                            {% elif spot.status == 'A' %}
+                                <form method="POST" action="{{ url_for('spot_status', spot_id=spot.id) }}">
+                                    <input type="hidden" name="new_status" value="O">
+                                    <button type="submit" class="btn btn-success">Mark as Occupied</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

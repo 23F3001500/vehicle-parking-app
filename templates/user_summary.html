@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}User Summary Charts{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background-color: white;
+    }
+
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 350px;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: 100% !important;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- Title and Back Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="color: #ad1457; font-weight: bold;">Your Parking Summary</h2>
+        <a href="{{ url_for('user_dashboard') }}" class="btn"
+           style="background-color: #ad1457; color: white; font-weight: 500; border-radius: 6px;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h4>Parking Spot Status</h4>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 text-center">
+            <h4>Total Spots per Lot</h4>
+            <div class="chart-container">
+                <canvas id="lotChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const statusChartData = {{ status_chart_data | tojson | safe }};
+    const lotChartData = {{ lot_chart_data | tojson | safe }};
+
+    new Chart(document.getElementById('statusChart'), {
+        type: 'pie',
+        data: {
+            labels: statusChartData.labels,
+            datasets: [{
+                data: statusChartData.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    new Chart(document.getElementById('lotChart'), {
+        type: 'bar',
+        data: {
+            labels: lotChartData.labels,
+            datasets: [{
+                label: 'Total Spots',
+                data: lotChartData.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(41, 128, 185, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

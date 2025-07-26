@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Occupant Details{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Heading and back button on same line -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 style="color: #c2185b; margin-bottom: 0;">Occupant Details</h3>
+        <a href="{{ url_for('view_spot_status', lot_id=lot_id) }}#lot-{{ lot_id }}"
+           class="btn" style="background-color: #c2185b; color: white;">
+            ← Back to Spot Status
+        </a>
+    </div>
+
+    {% if reservation %}
+        <p><strong>User Name:</strong> {{ reservation.user.username }}</p>
+        <p><strong>Vehicle Number:</strong> {{ reservation.user.vehicle_number }}</p>
+        <p><strong>Check-in Time:</strong> {{ reservation.start_time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    {% else %}
+        <p>No occupied reservation found for this spot.</p>
+    {% endif %}
+</div>
+{% endblock %}

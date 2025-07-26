@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Parking Lot - {{ lot.name }}{% endblock %}
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-2">{{ lot.name }}</h2>
+    <p class="text-muted">{{ lot.address }} - ₹{{ lot.price }}/hr</p>
+
+    <h4>Parking Spots</h4>
+    {% if spots %}
+        <div class="row">
+            {% for spot in spots %}
+                <div class="col-md-3 mb-3">
+                    <div class="card {% if spot.status == 'A' %}border-success{% else %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">Spot ID: {{ spot.id }}</h5>
+                            <p>Status: <strong>{{ 'Available' if spot.status == 'A' else 'Occupied' }}</strong></p>
+                            {% if spot.status == 'A' %}
+                                <a href="{{ url_for('book_spot', spot_id=spot.id) }}" class="btn btn-success btn-sm">Book</a>
+                            {% else %}
+                                <span class="badge badge-danger">Occupied</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="alert alert-info">No spots found for this lot.</p>
+    {% endif %}
+
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

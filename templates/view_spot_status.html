@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}View Spot Status{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <!-- Title and back button -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 style="color: #c2185b; margin-bottom: 0;">View Parking Spot Status</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn" style="background-color: #c2185b; color: white;">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Dropdown form -->
+    <form method="GET" action="{{ url_for('view_spot_status') }}" class="mb-5">
+        <div class="form-group">
+            <label for="lot_id"><strong>Select Parking Lot:</strong></label>
+            <select class="form-control" name="lot_id" id="lot_id" onchange="this.form.submit()">
+                <option value="">-- Choose a Parking Lot --</option>
+                {% for lot in lots %}
+                    <option value="{{ lot.id }}" {% if selected_lot and lot.id == selected_lot.id %}selected{% endif %}>
+                        {{ lot.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    {% if selected_lot %}
+        <!-- Anchor point for return scroll -->
+        <div id="lot-{{ selected_lot.id }}">
+            <h4 class="mb-4">{{ selected_lot.name }} (₹{{ selected_lot.price }}/hr)</h4>
+            <div class="row">
+                {% for spot in selected_lot.spots %}
+                    <div class="col-sm-6 col-md-3 col-lg-2 mb-3">
+                        <div class="card 
+                            {% if spot.status == 'A' %}border-success
+                            {% elif spot.status == 'O' %}border-warning
+                            {% else %}border-danger{% endif %}"
+                            style="font-size: 0.85rem; padding: 0.5rem; {% if spot.status == 'O' %}background-color: #fff9db;{% endif %}">
+                            <div class="card-body p-2">
+                                <h6 class="card-title mb-2">Spot ID: {{ spot.id }}</h6>
+                                <p class="mb-1">Status:
+                                    <strong>
+                                        {% if spot.status == 'A' %}
+                                            Available
+                                        {% elif spot.status == 'O' %}
+                                            <a href="{{ url_for('view_occupant_details', spot_id=spot.id, lot_id=selected_lot.id) }}"
+                                               style="color: inherit; text-decoration: none; pointer-events: auto; cursor: pointer;">
+                                                Occupied
+                                            </a>
+                                        {% elif spot.status == 'B' %}
+                                            Booked
+                                        {% else %}
+                                            Unknown
+                                        {% endif %}
+                                    </strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
